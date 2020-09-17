@@ -1,6 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { CommentDto } from "src/comments/dto/comment.dto";
 
 export class MovieDto {
+  @ApiProperty()
+  id: string
+
   @ApiProperty()
   title: string
 
@@ -15,4 +19,10 @@ export class MovieDto {
 
   @ApiPropertyOptional()
   plot: string
+
+  @ApiPropertyOptional({
+    type: CommentDto,
+    isArray: true
+  })
+  comments: CommentDto[]
 }

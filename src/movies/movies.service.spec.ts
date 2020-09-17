@@ -15,8 +15,6 @@ describe('MoviesService', () => {
   let httpService: HttpService
   let configService: ConfigService
 
-
-
   const mockQueryRunner = {
     connect: jest.fn(),
     startTransaction: jest.fn(),
@@ -55,11 +53,6 @@ describe('MoviesService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn()
-          }
-        }, {
-          provide: MovieSerializerService,
-          useValue: {
-            convertToEntity: (args: any) => args
           }
         }
       ]

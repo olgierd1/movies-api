@@ -1,5 +1,7 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommentsSerializerService } from 'src/comments/comment.serializer';
+import { OmdbModule } from 'src/omdb/omdb.module';
 import { Movie } from './movie.model';
 import { MovieSerializerService } from './movie.serializer';
 import { MoviesController } from './movies.controller';
@@ -8,11 +10,12 @@ import { MoviesService } from './movies.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Movie]),
-    HttpModule
+    HttpModule,
+    OmdbModule
   ],
   exports: [TypeOrmModule],
   controllers: [MoviesController],
-  providers: [MoviesService, MovieSerializerService]
+  providers: [MoviesService, MovieSerializerService, CommentsSerializerService]
 })
   
 export class MoviesModule {}

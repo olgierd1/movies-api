@@ -4,8 +4,8 @@ import { Comment } from '../comments/comment.model';
 
 @Entity()
 export class Movie {
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
   @Column()
   title: string
@@ -23,7 +23,7 @@ export class Movie {
   @IsOptional()
   plot: string
 
-  @OneToMany(() => Comment, comment => comment.movie, {cascade: true})
+  @OneToMany(() => Comment, comment => comment.movie, { cascade: true })
   comments: Comment[]
     
   constructor(partial: Partial<Movie>) {

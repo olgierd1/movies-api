@@ -16,7 +16,7 @@ RUN npm run build
 FROM node:14.7.0-alpine as production
 
 ARG NODE_ENV=production
-ARG PORT=3000
+ARG PORT=4040
 ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app

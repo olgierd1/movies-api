@@ -34,9 +34,16 @@ export class CommentsService {
     }
   }
 
-  async findAll(): Promise<Movie[]> {
-    return (await this.connection.getRepository(Movie)
-      .find({ relations: ['comments']}))
-      .filter(movie => !!movie.comments.length)
+  public async findAll(): Promise<string[]> {
+    return (await this.connection.getRepository(Comment).find({select: ['id']})).map(c => c.id)
+  }
+
+  public async find(uuid: string): Promise<Comment> {
+    const found = this.connection.getRepository(Comment).findOne(uuid)
+    if (!found) {
+      throw new NotFoundException()
+    }
+    
+    return found
   }
 }

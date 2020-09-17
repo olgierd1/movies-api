@@ -7,6 +7,7 @@ import { HealthController } from './health/health.controller'
 import { CustomHealthIndicator } from './health/custom.health'
 import { MoviesModule } from './movies/movies.module'
 import { CommentsModule } from './comments/comments.module'
+import { OmdbModule } from './omdb/omdb.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { CommentsModule } from './comments/comments.module'
     }),
     MoviesModule,
     HttpModule,
-    CommentsModule
+    CommentsModule,
+    OmdbModule
   ],
   controllers: [HealthController],
   providers: [CustomHealthIndicator],

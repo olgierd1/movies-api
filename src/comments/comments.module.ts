@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Comment } from './comment.model'
-import { MovieCommentsSerializerService, CommentsSerializerService } from './comment.serializer'
+import { CommentsSerializerService } from './comment.serializer'
 import { CommentsController } from './comments.controller'
 import { CommentsService } from './comments.service'
 
@@ -12,6 +12,6 @@ import { CommentsService } from './comments.service'
   ],
   exports: [TypeOrmModule],
   controllers: [CommentsController],
-  providers: [CommentsService, MovieCommentsSerializerService, CommentsSerializerService]
+  providers: [CommentsService, CommentsSerializerService]
 })
 export class CommentsModule {}

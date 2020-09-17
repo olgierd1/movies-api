@@ -1,45 +1,40 @@
-import { ConflictException, HttpService, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { Movie } from './movie.model';
-import { ConfigService } from '@nestjs/config';
-import { MovieSerializerService } from './movie.serializer';
-import { MovieDto } from './dto/movie.dto';
+import { OmdbService } from 'src/omdb/omdb.service';
 
 @Injectable()
 export class MoviesService {
   constructor(
     private connection: Connection,
-    private readonly configService: ConfigService,
-    private readonly movieSerializerService: MovieSerializerService,
-    private httpService: HttpService 
+    private readonly omdbService: OmdbService
   ) { }
   
-  private async fetchMovie(opts: CreateMovieDto): Promise<MovieDto> {
-    try {
-      const { data } = await this.httpService.get(`${this.configService.get('RESOURCE_BASE_URL')}&t=${opts.title}`).toPromise()
 
-      if (!data.Response) {
-        throw new NotFoundException(data.Error)
-      }
-      return this.movieSerializerService.convertToEntity(data)
-    } catch (error) {
-      throw error
-     }
+  private convert(data: BareMovie): FoundMovie {
+    return {
+      title: data.Title,
+      director: data.Director,
+      actors: data.Actors,
+      plot: data.Plot,
+      year: data.Year
+    }
   }
 
-  async create(opts: CreateMovieDto): Promise<void> {
-    const movie = await this.fetchMovie(opts)
+  public async create(opts: CreateMovieDto): Promise<void> {
+    const data = await this.omdbService.fetchMovie(opts) as BareMovie
+    const movie = this.convert(data)
 
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect()
     await queryRunner.startTransaction()
 
     try {
-      const finded = await queryRunner.manager.findOne(Movie, {
+      const found = await queryRunner.manager.findOne(Movie, {
         where: { title: movie.title }
       })
-      if (finded) {
+      if (found) {
         throw new ConflictException('Movie already exists in Database')
       }
       await queryRunner.manager.save(new Movie(movie))
@@ -53,7 +48,34 @@ export class MoviesService {
     }
   }
 
-  findAll(): Promise<Movie[]> {
-    return this.connection.getRepository(Movie).find()
+  public async findAll(): Promise<string[]> {
+    return (await this.connection.getRepository(Movie)
+      .find({select: ['id']})).map(movie => movie.id)
   }
+
+  public async find(uuid: string): Promise<Movie> {
+    const found = await this.connection.getRepository(Movie).findOne(uuid)
+    if (!found) {
+      throw new NotFoundException()
+    }
+    
+    return found
+  }
+}
+
+
+interface FoundMovie {
+  title: string
+  year: string
+  actors: string
+  director: string
+  plot?: string
+}
+
+interface BareMovie {
+  Title: string
+  Year: string
+  Actors: string
+  Director: string
+  Plot?: string
 }

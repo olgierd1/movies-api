@@ -2,40 +2,23 @@ import { Injectable } from "@nestjs/common";
 import { BaseSerializerService } from "../serialize/base.serializer";
 import { Movie } from "./movie.model";
 import { MovieDto } from "./dto/movie.dto";
+import { CommentsSerializerService } from "src/comments/comment.serializer";
 
 @Injectable()
 export class MovieSerializerService extends BaseSerializerService<Movie, MovieDto> {
+  constructor(private readonly commentsSerializerService: CommentsSerializerService) {
+    super();
+  }
 
  public serialize(entity: Movie): MovieDto {
    return {
+     id: entity.id,
      title: entity.title,
      director: entity.director,
      actors: entity.actors,
      plot: entity.plot,
-     year: entity.year
+     year: entity.year,
+     ...(entity.comments && {comments: this.commentsSerializerService.serializeCollection(entity.comments)})
    }
  }
-  
-  public convertToEntity(movie: BareMovie): MovieDto {
-    return {
-      title: movie.Title,
-      director: movie.Director,
-      actors: movie.Actors,
-      plot: movie.Plot,
-      year: movie.Year
-    }
-  }
-
-  constructor() {
-   super();
- }
-}
-
-
-export interface BareMovie {
-  Title: string
-  Year: string
-  Actors: string
-  Director: string
-  Plot: string
 }

@@ -1,8 +1,8 @@
 {
   "name": "movies-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Movies API",
+  "author": "Olgierd",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
