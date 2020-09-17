@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  postgres:
+    container_name: movies-db
+    image: postgres
+    ports:
+      - 5433:5432
+    env_file:
+      - .env
+  app:
+    container_name: movies-api
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - ${PORT}:${PORT}
+      - 9229:9229
+    command: npm run start:debug
+    env_file:
+      - .env
