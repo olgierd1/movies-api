@@ -1,13 +1,12 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
-
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from 'joi';
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import * as Joi from 'joi'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { HealthController } from './health/health.controller';
+import { HealthController } from './health/health.controller'
 import { CustomHealthIndicator } from './health/custom.health'
-import { MoviesModule } from './movies/movies.module';
-import { CommentsModule } from './comments/comments.module';
+import { MoviesModule } from './movies/movies.module'
+import { CommentsModule } from './comments/comments.module'
 
 @Module({
   imports: [

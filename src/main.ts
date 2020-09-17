@@ -9,6 +9,9 @@ import { ConfigService } from '@nestjs/config'
 import { ValidationPipe, Logger } from '@nestjs/common'
 import { useContainer } from 'class-validator'
 import { ExceptionsFilter } from './exception/exceptions.filter'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { MoviesModule } from './movies/movies.module'
+import { CommentsModule } from './comments/comments.module'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -22,7 +25,7 @@ async function bootstrap() {
 
   const prefix = 'api'
   app.setGlobalPrefix(prefix)
-
+  
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -31,9 +34,20 @@ async function bootstrap() {
     }),
   )
 
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  useContainer(app.select(AppModule), { fallbackOnErrors: true })
 
   app.useGlobalFilters(new ExceptionsFilter())
+
+  const options = new DocumentBuilder()
+  .setTitle('Movie API')
+  .setDescription('API for searching and saving movies')
+  .setVersion('1.0')
+  .build()
+
+  const appDocument = SwaggerModule.createDocument(app, options, {
+    include: [AppModule, MoviesModule, CommentsModule],
+  })
+  SwaggerModule.setup(prefix, app, appDocument)
 
   await app.listen(configService.get('PORT'), '0.0.0.0')
   Logger.log(`Application is running on: ${await app.getUrl()}`)

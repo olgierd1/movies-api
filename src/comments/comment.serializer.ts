@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { Movie } from "src/movies/movie.model";
-import { BaseSerializerService } from "../serialize/base.serializer";
-import { Comment } from "./comment.model";
-import { CommentDto, MovieCommentsDto } from "./dto/comment.dto";
+import { Injectable } from "@nestjs/common"
+import { Movie } from "src/movies/movie.model"
+import { BaseSerializerService } from "../serialize/base.serializer"
+import { Comment } from "./comment.model"
+import { CommentDto, MovieCommentsDto } from "./dto/comment.dto"
 
 @Injectable()
 export class CommentsSerializerService extends BaseSerializerService<Comment, CommentDto> {
   constructor() {
-    super();
+    super()
   }
   
   public serialize(entity: Comment): CommentDto {
@@ -22,7 +22,7 @@ export class CommentsSerializerService extends BaseSerializerService<Comment, Co
 export class MovieCommentsSerializerService extends BaseSerializerService<Movie, MovieCommentsDto> {
   constructor(
     private readonly commentsSerializerService: CommentsSerializerService) {
-    super();
+    super()
   }
   
   public serialize(entity: Movie): MovieCommentsDto {

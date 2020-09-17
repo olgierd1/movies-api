@@ -1,13 +1,18 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
-//TODO: add swagger ApiProperty
 export class MovieDto {
+  @ApiProperty()
   title: string
 
+  @ApiProperty()
   director: string
 
+  @ApiProperty()
   year: string
 
+  @ApiProperty()
   actors: string
-  
+
+  @ApiPropertyOptional()
   plot: string
 }

@@ -1,13 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Connection } from 'typeorm';
-import { Movie } from '../movies/movie.model';
-import { MoviesService } from 'src/movies/movies.service';
-import { ConflictException, HttpModule, HttpService, NotFoundException } from "@nestjs/common";
-import { ConfigService } from '@nestjs/config';
-import { of } from 'rxjs';
-import { AxiosResponse } from 'axios';
-import { CommentsService } from './comments.service';
-import { Comment } from './comment.model';
+import { Test, TestingModule } from '@nestjs/testing'
+import { Connection } from 'typeorm'
+import { Movie } from '../movies/movie.model'
+import { HttpModule, NotFoundException } from "@nestjs/common"
+import { CommentsService } from './comments.service'
+import { Comment } from './comment.model'
 
 describe('CommentsService', () => {
   let service: CommentsService
@@ -49,17 +45,17 @@ describe('CommentsService', () => {
           })
         }
       ]
-    }).compile();
+    }).compile()
     
-      service = module.get<CommentsService>(CommentsService);
+      service = module.get<CommentsService>(CommentsService)
       connection = module.get<Connection>(Connection)
       connection.createQueryRunner.mockImplementation(() => {
         return mockQueryRunner
-      });
+      })
       connection.getRepository.mockImplementation(() => {
         return mockRepo
       })
-  });
+  })
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -106,4 +102,4 @@ describe('CommentsService', () => {
 
     expect(fakeFind).toBeCalledWith({ relations: ['comments']})
   })
-});
+})

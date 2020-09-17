@@ -1,5 +1,5 @@
 import { IsOptional } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Comment } from '../comments/comment.model';
 
 @Entity()
