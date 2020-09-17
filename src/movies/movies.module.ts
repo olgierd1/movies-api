@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movie } from './movie.model';
 import { MovieSerializerService } from './movie.serializer';
@@ -8,6 +8,7 @@ import { MoviesService } from './movies.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Movie]),
+    HttpModule
   ],
   exports: [TypeOrmModule],
   controllers: [MoviesController],

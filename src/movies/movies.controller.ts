@@ -1,7 +1,6 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { MoviesService } from './movies.service';
-import { ReqMovie } from './movie.decorator';
 import { MovieSerializerService } from './movie.serializer';
 import { MovieDto } from './dto/movie.dto';
 
@@ -12,8 +11,8 @@ export class MoviesController {
   private readonly movieSerializer: MovieSerializerService) { }
   
   @Post()
-  create(@ReqMovie() movie: CreateMovieDto): Promise<void>  {
-    return this.moviesService.create(movie)
+  create(@Body() payload: CreateMovieDto): Promise<void>  {
+    return this.moviesService.create(payload)
   }
 
   @Get()

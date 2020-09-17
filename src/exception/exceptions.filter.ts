@@ -8,12 +8,12 @@ export class ExceptionsFilter implements ExceptionFilter {
  
     if (exception instanceof HttpException) {
       response.status(exception.getStatus()).send({
-        code: exception.message
+        description: exception.message
       });
     } else {
       Logger.error(exception)
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        code: 'exception.internal'
+        description: 'Exception internal'
       });
     }
   }

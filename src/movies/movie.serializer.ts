@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { BaseSerializerService } from "../serialize/base.serializer";
 import { Movie } from "./movie.model";
 import { MovieDto } from "./dto/movie.dto";
-import { PureMovie } from "./movies.service";
 
 @Injectable()
 export class MovieSerializerService extends BaseSerializerService<Movie, MovieDto> {
@@ -17,8 +16,7 @@ export class MovieSerializerService extends BaseSerializerService<Movie, MovieDt
    }
  }
   
-  // TODO: think about better name
-  public convertToEntity(movie: PureMovie): MovieDto {
+  public convertToEntity(movie: BareMovie): MovieDto {
     return {
       title: movie.Title,
       director: movie.Director,
@@ -31,4 +29,13 @@ export class MovieSerializerService extends BaseSerializerService<Movie, MovieDt
   constructor() {
    super();
  }
+}
+
+
+export interface BareMovie {
+  Title: string
+  Year: string
+  Actors: string
+  Director: string
+  Plot: string
 }

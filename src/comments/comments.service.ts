@@ -1,5 +1,5 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Movie } from 'src/movies/movie.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Movie } from '../movies/movie.model';
 import { Connection } from 'typeorm';
 import { CreateCommentDto } from './dto/create.comment.dto';
 import { Comment } from './comment.model';
@@ -19,7 +19,6 @@ export class CommentsService {
       if (!movie) {
         throw new NotFoundException('Movie with this title does not exist in Database')
       }
-
       await queryRunner.manager.save(new Comment({
         text: commentDto.text,
         author: commentDto.author,

@@ -12,8 +12,8 @@ export class CommentsController {
   ) { }
 
   @Post()
-  create(@Body() body: CreateCommentDto): Promise<void> {
-    return this.commentsService.create(body)
+  create(@Body() payload: CreateCommentDto): Promise<void> {
+    return this.commentsService.create(payload)
   }
   
   @Get()

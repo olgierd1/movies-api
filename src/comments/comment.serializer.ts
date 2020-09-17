@@ -6,15 +6,15 @@ import { CommentDto, MovieCommentsDto } from "./dto/comment.dto";
 
 @Injectable()
 export class CommentsSerializerService extends BaseSerializerService<Comment, CommentDto> {
+  constructor() {
+    super();
+  }
+  
   public serialize(entity: Comment): CommentDto {
     return {
       text: entity.text,
       author: entity.author
     }
-  }
-
-  constructor() {
-    super();
   }
 } 
 

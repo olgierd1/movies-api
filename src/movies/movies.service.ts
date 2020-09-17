@@ -1,7 +1,6 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpService, Injectable, NotFoundException } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { CreateMovieDto } from './dto/create.movie.dto';
-import fetch from 'node-fetch';
 import { Movie } from './movie.model';
 import { ConfigService } from '@nestjs/config';
 import { MovieSerializerService } from './movie.serializer';
@@ -12,14 +11,15 @@ export class MoviesService {
   constructor(
     private connection: Connection,
     private readonly configService: ConfigService,
-    private readonly movieSerializerService: MovieSerializerService
+    private readonly movieSerializerService: MovieSerializerService,
+    private httpService: HttpService 
   ) { }
   
   private async fetchMovie(opts: CreateMovieDto): Promise<MovieDto> {
     try {
-      const response = await fetch(`${this.configService.get('RESOURCE_BASE_URL')}&t=${opts.title}`)
-      const data = await response.json()
-      if (data && data.Error) {
+      const { data } = await this.httpService.get(`${this.configService.get('RESOURCE_BASE_URL')}&t=${opts.title}`).toPromise()
+
+      if (!data.Response) {
         throw new NotFoundException(data.Error)
       }
       return this.movieSerializerService.convertToEntity(data)
@@ -36,10 +36,10 @@ export class MoviesService {
     await queryRunner.startTransaction()
 
     try {
-      const finded = await queryRunner.manager.find(Movie, {
+      const finded = await queryRunner.manager.findOne(Movie, {
         where: { title: movie.title }
       })
-      if (finded && finded.length > 0) {
+      if (finded) {
         throw new ConflictException('Movie already exists in Database')
       }
       await queryRunner.manager.save(new Movie(movie))
@@ -56,13 +56,4 @@ export class MoviesService {
   findAll(): Promise<Movie[]> {
     return this.connection.getRepository(Movie).find()
   }
-}
-
-
- export interface PureMovie {
-  Title: string
-  Year: string
-  Actors: string
-  Director: string
-  Plot: string
 }
