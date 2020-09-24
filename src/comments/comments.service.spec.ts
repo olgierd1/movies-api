@@ -29,7 +29,8 @@ describe('CommentsService', () => {
   }
 
   const mockRepo = {
-    find: jest.fn()
+    find: jest.fn(),
+    findOne: jest.fn()
   }
 
   beforeEach(async () => {
@@ -97,9 +98,32 @@ describe('CommentsService', () => {
   })
 
   it('should return all comments with assigned movie titles', async () => {
-    const fakeFind = jest.spyOn(mockRepo, 'find').mockReturnValue([])
-    await service.findAll()
+    const fakeFind = jest.spyOn(mockRepo, 'find').mockReturnValue([{id: 'a'}, {id: 'b'}])
+    const actual = await service.findAll()
 
-    expect(fakeFind).toBeCalledWith({ relations: ['comments']})
+    expect(fakeFind).toBeCalledWith({ select: ['id'] })
+    expect(actual).toStrictEqual(['a','b'])
+  })
+
+  describe('find', () => {
+    it('should throw NotFoundException', async () => {
+      const fakeFind = jest.spyOn(mockRepo, 'findOne').mockReturnValue(undefined)
+      let error
+      try {
+        await service.find('a')
+      } catch (e) {
+        error = e        
+      }
+
+      expect(error).not.toBeUndefined()
+      expect(error).toBeInstanceOf(NotFoundException)
+    })
+    it('should return comment', async () => {
+      const fakeFind = jest.spyOn(mockRepo, 'findOne').mockResolvedValue(fakeComment as unknown as Comment)
+      const actual = await service.find('a')
+
+      expect(actual).toBe(fakeComment)
+      expect(fakeFind).toBeCalledWith('a')
+    })
   })
 })

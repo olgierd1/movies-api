@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { CommentDto } from "src/comments/dto/comment.dto";
+import { CommentDto } from "../../comments/dto/comment.dto";
+
 
 export class MovieDto {
   @ApiProperty()
@@ -11,8 +12,8 @@ export class MovieDto {
   @ApiProperty()
   director: string
 
-  @ApiProperty()
-  year: string
+  @ApiProperty({minimum: 0})
+  year: number
 
   @ApiProperty()
   actors: string

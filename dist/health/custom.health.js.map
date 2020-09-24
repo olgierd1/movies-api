@@ -1,0 +1,1 @@
+{"version":3,"file":"custom.health.js","sourceRoot":"","sources":["../../src/health/custom.health.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAA4C;AAC5C,+CAA0E;AAG1E,IAAa,qBAAqB,GAAlC,MAAa,qBAAsB,SAAQ,0BAAe;IAExD,KAAK,CAAC,SAAS;QACb,OAAO,IAAI,CAAC,SAAS,CAAC,SAAS,EAAE,IAAI,CAAC,CAAC;IACzC,CAAC;CACF,CAAA;AALY,qBAAqB;IADjC,mBAAU,EAAE;GACA,qBAAqB,CAKjC;AALY,sDAAqB"}

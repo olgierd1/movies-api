@@ -14,7 +14,7 @@ export class Movie {
   director: string
 
   @Column()
-  year: string
+  year: number
 
   @Column()
   actors: string 

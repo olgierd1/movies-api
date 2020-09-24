@@ -1,20 +1,25 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger, HttpException } from "@nestjs/common";
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger} from "@nestjs/common";
 
+
+interface Exception extends Error {
+  getStatus();
+  response: {
+    message: string[]
+  }
+}
 @Catch()
 export class ExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) : void {
+  catch(exception: Exception, host: ArgumentsHost) : void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
+    const status = exception.getStatus()
  
-    if (exception instanceof HttpException) {
-      response.status(exception.getStatus()).send({
-        description: exception.message
-      });
-    } else {
+    if (status === 500) {
       Logger.error(exception)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        description: 'Exception internal'
-      });
     }
+    
+    response.status(exception.getStatus()).send({
+      description: status === 400 ? exception?.response?.message : exception.message
+    })
   }
 }

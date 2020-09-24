@@ -27,13 +27,20 @@ https://movies-awesome-api.herokuapp.com/api
 Based on passed data `title` and `year` - searches http://www.omdbapi.com/ and save found movie in Database
 
 ### GET /movie
-Returns all movies saved in Database
+Returns movies ids saved in Database
+
+### GET  /movie:uuid
+Returns movie with assigned comments
+
 
 ### POST /comments
 Based on passed `movieTitle` - search for movie in Database and assign comment to found movie
 
 ### GET /comments
-Returns all comments with assigned movies
+Returns comments ids saved in Database
+
+### GET /comments:uuid
+Returns comment
 
 ### Movies API is using http://www.omdbapi.com/ with my private free api key
 ### Movies API is deployed on Heroku

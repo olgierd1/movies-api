@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Connection } from 'typeorm';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { Movie } from './movie.model';
-import { OmdbService } from 'src/omdb/omdb.service';
+import { OmdbService } from '../omdb/omdb.service';
 
 @Injectable()
 export class MoviesService {
@@ -18,7 +18,7 @@ export class MoviesService {
       director: data.Director,
       actors: data.Actors,
       plot: data.Plot,
-      year: data.Year
+      year: parseInt(data.Year)
     }
   }
 
@@ -54,7 +54,7 @@ export class MoviesService {
   }
 
   public async find(uuid: string): Promise<Movie> {
-    const found = await this.connection.getRepository(Movie).findOne(uuid)
+    const found = await this.connection.getRepository(Movie).findOne(uuid, {relations: ["comments"]})
     if (!found) {
       throw new NotFoundException()
     }
@@ -66,7 +66,7 @@ export class MoviesService {
 
 interface FoundMovie {
   title: string
-  year: string
+  year: number
   actors: string
   director: string
   plot?: string

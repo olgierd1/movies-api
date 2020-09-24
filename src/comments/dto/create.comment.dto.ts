@@ -1,23 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateCommentDto {
-  @IsString({message: 'Movie title must be string'})
-  @MaxLength(200, {message: 'Movie title is too long. Max size is 200'})
-  @IsNotEmpty({message: 'Movie Title can not be empty'})
-  @ApiProperty({maxLength: 200})
+  @IsString({message: 'moviTitle must be string'})
+  @IsNotEmpty({message: 'movieTitle can not be empty'})
+  @MaxLength(200)
+  @MinLength(1)
+  @ApiProperty({maxLength: 200, minLength: 1})
   movieTitle: string
 
-  @IsString({message: 'Text must be string'})
-  @MaxLength(200, {message: 'Comment text is too long. Max size is 200'})
-  @IsNotEmpty({message: 'Text can not be empty'})
-  @ApiProperty({maxLength: 200})
+  @IsString({message: 'text must be string'})
+  @IsNotEmpty({message: 'text can not be empty'})
+  @MaxLength(400)
+  @MinLength(1)
+  @ApiProperty({maxLength: 200, minLength: 1})
   text: string
 
-  @IsString({message: 'Author must be string'})
-  @MaxLength(200, {message: 'Comment author is too long. Max size is 200'})
-  @IsNotEmpty({ message: 'Author can not be empty' })
-  @ApiProperty({ maxLength: 200 })
+  @IsString({message: 'author must be string'})
+  @IsNotEmpty({ message: 'author can not be empty' })
+  @MaxLength(200)
+  @MinLength(1)
+  @ApiProperty({ maxLength: 200, minLength: 1 })
   author: string
 
 }

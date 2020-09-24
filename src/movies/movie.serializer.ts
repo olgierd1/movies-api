@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseSerializerService } from "../serialize/base.serializer";
 import { Movie } from "./movie.model";
 import { MovieDto } from "./dto/movie.dto";
-import { CommentsSerializerService } from "src/comments/comment.serializer";
+import { CommentsSerializerService } from "../comments/comment.serializer";
 
 @Injectable()
 export class MovieSerializerService extends BaseSerializerService<Movie, MovieDto> {

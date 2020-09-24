@@ -1,13 +1,15 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import TestUtils from '../../test/test.utils'
 import { Comment } from './comment.model';
+import { Movie } from '../movies/movie.model';
 import { CommentsSerializerService } from './comment.serializer';
 
 const randomComment = () => {
   return {
-    id: 1,
+    id: TestUtils.random(),
     text: TestUtils.random(),
-    author: TestUtils.random()
+    author: TestUtils.random(),
+    movie: {} as Movie
   } as Comment
 }
 describe('CommentsSerializerService', () => {
@@ -25,8 +27,11 @@ describe('CommentsSerializerService', () => {
   it('should serialize comment', () => {
     const comment = randomComment()
     const actual = serializer.serialize(comment)
-    const { id, ...rest } = comment
-
-    expect(actual).toMatchObject(rest);
+    
+    expect(actual).toMatchObject({
+      id: comment.id,
+      text: comment.text,
+      author: comment.author
+    });
   });
 })

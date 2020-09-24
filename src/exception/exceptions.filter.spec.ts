@@ -35,18 +35,17 @@ describe('ExceptionsFilter', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  it(`should catch http  exception`, () => {
+  it(`should catch http exception`, () => {
     return request(app.getHttpServer())
       .get('/dummy/http')
       .expect(400)
       .expect({description:'Bad Request'});
   });
-
   it(`should catch custom exception`, () => {
     return request(app.getHttpServer())
       .get('/dummy/custom')
       .expect(500)
-      .expect({description:'Exception internal'});
+      .expect({statusCode: 500, message: 'Internal server error'});
   });
 
   afterAll(async () => {

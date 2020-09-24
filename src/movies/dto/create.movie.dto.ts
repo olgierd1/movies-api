@@ -1,15 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {  IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import {  IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 export class CreateMovieDto {
-  @IsString()
-  @MaxLength(200, {message: 'Movie title is too long. Max size is 200'})
-  @IsNotEmpty({message: 'Title can not be empty string'})
-  @ApiProperty({maxLength: 200})
+  @IsString({message: 'title must be a string'})
+  @IsNotEmpty({ message: 'title can not be empty string' })
+  @MinLength(0)
+  @MaxLength(200)
+  @ApiProperty({maxLength: 200, minLength: 0})
   title: string
 
 
-  @IsString()
+  @IsInt()
   @IsOptional()
   @Min(0, {message: 'Min year value is 0'})
   @IsNotEmpty({message: 'Year can not be empty'})

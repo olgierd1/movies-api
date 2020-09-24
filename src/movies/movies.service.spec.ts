@@ -2,18 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Connection } from 'typeorm';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
-import { ConflictException, HttpModule, HttpService } from "@nestjs/common";
-import { ConfigService } from '@nestjs/config';
-import { MovieSerializerService } from './movie.serializer';
-import { of } from 'rxjs';
-import { AxiosResponse } from 'axios';
-import { CreateMovieDto } from './dto/create.movie.dto';
+import { ConflictException, NotFoundException } from "@nestjs/common";
+import { OmdbService } from '../omdb/omdb.service';
 
 describe('MoviesService', () => {
   let service: MoviesService
   let connection
-  let httpService: HttpService
-  let configService: ConfigService
+  let omdbService: OmdbService
 
   const mockQueryRunner = {
     connect: jest.fn(),
@@ -29,17 +24,21 @@ describe('MoviesService', () => {
   }
 
   const fakeMovie = {
-    title: 'Title',
-    director: 'director',
+    Title: 'Title',
+    Director: 'director',
+    Plot: 'plot',
+    Year: 1998,
+    Actors: 'Jason Statham',
     Response: true
   }
+  
   const mockRepo = {
-    find: jest.fn()
+    find: jest.fn(),
+    findOne: jest.fn()
   }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
       providers: [
         MoviesService, 
         {
@@ -50,17 +49,16 @@ describe('MoviesService', () => {
           })
         },
         {
-          provide: ConfigService,
+          provide: OmdbService,
           useValue: {
-            get: jest.fn()
+            fetchMovie: jest.fn()
           }
         }
       ]
     }).compile();
     
       service = module.get<MoviesService>(MoviesService);
-      httpService = module.get<HttpService>(HttpService);
-      configService = module.get<ConfigService>(ConfigService)
+      omdbService = module.get<OmdbService>(OmdbService)
       connection = module.get<Connection>(Connection)
       connection.createQueryRunner.mockImplementation(() => {
         return mockQueryRunner
@@ -74,51 +72,69 @@ describe('MoviesService', () => {
     jest.clearAllMocks()
   })
 
-  it(`should throw ConflictException when customer found in db`, async () => {
-    jest.spyOn(httpService, 'get').mockImplementation(() => of({
-      data: fakeMovie
-    } as AxiosResponse));
-    jest.spyOn(configService, 'get').mockImplementation((): any => 'TEST') 
+  it('should throw ConflictException when movie found in db', async () => {
+    jest.spyOn(omdbService, 'fetchMovie').mockResolvedValue(fakeMovie);
     const findSpy = jest.spyOn(mockQueryRunner.manager, 'findOne')
     
     mockQueryRunner.manager.findOne.mockReturnValue('db value')
 
     let error: any
     try {
-      await service.create({title: fakeMovie.title, year: '1998'})
+      await service.create({title: fakeMovie.Title, year: 1998})
     } catch (err) {
       error = err
     }
+
     expect(error).not.toBeUndefined()
     expect(error).toBeInstanceOf(ConflictException)
+    expect(error.message).toBe('Movie already exists in Database')
 
     expect(findSpy).toBeCalledWith(Movie, {  
-      where: { title: fakeMovie.title } 
+      where: { title: fakeMovie.Title } 
     })
   })
   it('should fetch movie and save in Database', async () => {
-    const movie = {
-      id: 1,
-      title: 'Title',
-      director: 'Director',
-      year: '123',
-    }
     mockQueryRunner.manager.findOne.mockReturnValue(undefined)
-    jest.spyOn(httpService, 'get').mockImplementation(() => of({
-      data: {Response: true, ...movie}
-    } as AxiosResponse));
+    jest.spyOn(omdbService, 'fetchMovie').mockResolvedValue(fakeMovie);
+
 
     const saveSpy = jest.spyOn(mockQueryRunner.manager, 'save')
 
-    await service.create(movie as CreateMovieDto)
+    await service.create({title: 'Title', year: 1998})
 
-    const { Response, ...rest } = saveSpy.mock.calls[0][0]
-    expect(rest).toEqual(new Movie(movie))
+    expect(saveSpy).toBeCalledWith(new Movie({
+      title: fakeMovie.Title,
+      director: fakeMovie.Director,
+      plot: fakeMovie.Plot,
+      year: fakeMovie.Year,
+      actors: fakeMovie.Actors
+    }))
   })
   it('should return all movies saved in Database', async () => {
-    const fakeFind = jest.spyOn(mockRepo, 'find')
-    await service.findAll()
+    const fakeFind = jest.spyOn(mockRepo, 'find').mockResolvedValue([{id: '1'}, {id: '2'}])
+    const actual = await service.findAll()
+    expect(fakeFind).toBeCalledWith({ select: ['id'] })
+    expect(actual).toStrictEqual(['1', '2'])
+  })
+  describe('find', () => {
+    it('should throw NotFoundException', async () => {
+      jest.spyOn(mockRepo, 'findOne').mockResolvedValue(undefined)
+      let error: any
+      try {
+        await service.find('uuid')
+      } catch (e) {
+        error = e
+      }
+      expect(error).not.toBeUndefined()
+      expect(error).toBeInstanceOf(NotFoundException)
+    })
+    it('should returned movie from db', async () => {
+      const fakeMovie ={test: 'test'} as unknown as Movie
+      const fakeFind = jest.spyOn(mockRepo, 'findOne').mockResolvedValue(fakeMovie)
+      const actual = await service.find('uuid')
 
-    expect(fakeFind).toBeCalled()
+      expect(actual).toBe(fakeMovie)
+      expect(fakeFind).toBeCalledWith('uuid', {relations: ["comments"]})
+    })
   })
 });
